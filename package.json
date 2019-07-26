@@ -1,0 +1,23 @@
+{
+  "name": "folmura",
+  "version": "1.0.0",
+  "description": "Draw auto generated formula",
+  "scripts": {
+    "watch": "parcel src/index.html -d tmp",
+    "build": "parcel build src/index.html -d docs --no-source-maps --public-url ./"
+  },
+  "author": "abagames",
+  "license": "MIT",
+  "browserslist": [
+    "last 1 Chrome version"
+  ],
+  "devDependencies": {
+    "@types/p5": "^0.7.3",
+    "parcel-bundler": "^1.12.3",
+    "parcel-plugin-clean-dist": "0.0.6",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "p5": "^0.9.0"
+  }
+}
