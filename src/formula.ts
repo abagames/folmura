@@ -2,7 +2,7 @@ import { p } from "./main";
 import { Random } from "./random";
 import { range } from "./math";
 
-type Formula = {
+export type Formula = {
   func: Function;
   args?: Formula[];
   value?: number | string;
@@ -19,13 +19,13 @@ export function generate(random: Random, depth = 0): Formula {
   } else if (r < 0.5 * dr) {
     return {
       func: variable,
-      value: random.select(["t", "t", "i", "x", "y"])
+      value: random.select(["t", "t", "i"])
     };
   } else {
     const funcs = [
       [plus, 2],
       [minus, 2],
-      [multiple, 2],
+      [times, 2],
       [divide, 2],
       [sin, 1],
       [sin, 1],
@@ -46,6 +46,14 @@ export function calc(formula: Formula, variables) {
   return formula.func(formula, variables);
 }
 
+export function swapSinCos(f: Formula) {
+  return {
+    func: f.func === sin ? cos : f.func === cos ? sin : f.func,
+    args: f.args == null ? undefined : f.args.map(f => swapSinCos(f)),
+    value: f.value
+  };
+}
+
 function plus(formula: Formula, variables) {
   return calc(formula.args[0], variables) + calc(formula.args[1], variables);
 }
@@ -54,7 +62,7 @@ function minus(formula: Formula, variables) {
   return calc(formula.args[0], variables) - calc(formula.args[1], variables);
 }
 
-function multiple(formula: Formula, variables) {
+function times(formula: Formula, variables) {
   return calc(formula.args[0], variables) * calc(formula.args[1], variables);
 }
 
