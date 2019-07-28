@@ -11,15 +11,10 @@ export type Formula = {
 export function generate(random: Random, depth = 0): Formula {
   const r = random.get();
   const dr = depth / 3;
-  if (r < 0.25 * dr) {
-    return {
-      func: constant,
-      value: random.get(0.5, 2) * random.getPlusOrMinus()
-    };
-  } else if (r < 0.5 * dr) {
+  if (r < 0.5 * dr) {
     return {
       func: variable,
-      value: random.select(["t", "t", "i"])
+      value: random.select(["t", "t", "i", "a", "b", "c"])
     };
   } else {
     const funcs = [
@@ -54,6 +49,10 @@ export function swapSinCos(f: Formula) {
   };
 }
 
+function variable(formula: Formula, variables) {
+  return variables[formula.value];
+}
+
 function plus(formula: Formula, variables) {
   return calc(formula.args[0], variables) + calc(formula.args[1], variables);
 }
@@ -68,7 +67,7 @@ function times(formula: Formula, variables) {
 
 function divide(formula: Formula, variables) {
   let v = calc(formula.args[1], variables);
-  if (v === 0) {
+  if (p.abs(v) < 0.01) {
     v = 0.01;
   }
   return calc(formula.args[0], variables) / v;
@@ -95,12 +94,4 @@ function pow(formula: Formula, variables) {
 
 function noise(formula: Formula, variables) {
   return p.noise(calc(formula.args[0], variables));
-}
-
-function constant(formula: Formula) {
-  return formula.value;
-}
-
-function variable(formula: Formula, variables) {
-  return variables[formula.value];
 }

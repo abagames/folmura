@@ -10,7 +10,7 @@ const random = new Random();
 const variables: any = {};
 
 function setup() {
-  p.createCanvas(200, 100);
+  p.createCanvas(500, 250);
   p.noStroke();
   p.colorMode(p.HSB);
   p.background(0);
@@ -23,6 +23,8 @@ type FormulaRange = {
   max: number;
   targetMin: number;
   targetMax: number;
+  frameMin: number;
+  frameMax: number;
 };
 
 let formulas: formula.Formula[];
@@ -43,7 +45,9 @@ function generateFormulas() {
       min: -1,
       max: 1,
       targetMin: -1,
-      targetMax: 1
+      targetMax: 1,
+      frameMin: 1,
+      frameMax: -1
     };
   });
   formulaRanges[0].targetMin = -p.width;
@@ -63,6 +67,9 @@ function generateFormulas() {
   shapes = range(random.getInt(10, 100)).map(() => {
     return { pos: new Vector(), size: new Vector(), color: [0, 0, 0] };
   });
+  variables["a"] = random.getInt(2, 10);
+  variables["b"] = random.getInt(2, 10);
+  variables["c"] = random.getInt(2, 10);
   t = 0;
 }
 
@@ -73,35 +80,37 @@ function draw() {
   shapes.forEach((s, i) => {
     variables["i"] = i;
     s.pos.set(
-      adjustFormulaRange(
+      adjustFormulaValue(
         formulaRanges[0],
         formula.calc(formulas[0], variables)
       ),
-      adjustFormulaRange(formulaRanges[1], formula.calc(formulas[1], variables))
+      adjustFormulaValue(formulaRanges[1], formula.calc(formulas[1], variables))
     );
     s.size.set(
-      adjustFormulaRange(
+      adjustFormulaValue(
         formulaRanges[2],
         formula.calc(formulas[2], variables)
       ),
-      adjustFormulaRange(formulaRanges[3], formula.calc(formulas[3], variables))
+      adjustFormulaValue(formulaRanges[3], formula.calc(formulas[3], variables))
     );
     s.color[0] +=
-      (adjustFormulaRange(
-        formulaRanges[4],
-        formula.calc(formulas[4], variables)
-      ) -
-        s.color[0]) *
-      0.1;
+      wrap(
+        adjustFormulaValue(
+          formulaRanges[4],
+          formula.calc(formulas[4], variables)
+        ) - s.color[0],
+        -180,
+        180
+      ) * 0.1;
     s.color[1] +=
-      (adjustFormulaRange(
+      (adjustFormulaValue(
         formulaRanges[5],
         formula.calc(formulas[5], variables)
       ) -
         s.color[1]) *
       0.1;
     s.color[2] +=
-      (adjustFormulaRange(
+      (adjustFormulaValue(
         formulaRanges[6],
         formula.calc(formulas[6], variables)
       ) -
@@ -117,22 +126,36 @@ function draw() {
       s.pos.y + p.height / 2
     );
   });
+  formulaRanges.forEach(fr => {
+    adjustFormulaRange(fr);
+  });
   t += 1 / 60;
 }
 
-function adjustFormulaRange(fr: FormulaRange, v: number) {
+function adjustFormulaValue(fr: FormulaRange, v: number) {
   if (isNaN(v)) {
     return 0;
   }
-  fr.min += (v - fr.min) * (v < fr.min ? 0.1 : 0.01);
-  fr.max += (v - fr.max) * (v > fr.max ? 0.1 : 0.01);
-  if (fr.max <= fr.min) {
-    fr.max = fr.min + 0.01;
+  if (v < fr.frameMin) {
+    fr.frameMin = v;
+  }
+  if (v > fr.frameMax) {
+    fr.frameMax = v;
   }
   return (
     ((v - fr.min) / (fr.max - fr.min)) * (fr.targetMax - fr.targetMin) +
     fr.targetMin
   );
+}
+
+function adjustFormulaRange(fr: FormulaRange) {
+  fr.min += (fr.frameMin - fr.min) * (fr.frameMin < fr.min ? 0.1 : 0.01);
+  fr.max += (fr.frameMax - fr.max) * (fr.frameMax > fr.max ? 0.1 : 0.01);
+  if (fr.max <= fr.min) {
+    fr.max = fr.min + 0.01;
+  }
+  fr.frameMin = fr.max;
+  fr.frameMax = fr.min;
 }
 
 new p5((_p: p5) => {
