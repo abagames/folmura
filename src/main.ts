@@ -11,7 +11,6 @@ const variables: any = {};
 
 function setup() {
   p.createCanvas(500, 250);
-  p.noStroke();
   p.colorMode(p.HSB);
   p.background(0);
   generateFormulas();
@@ -81,6 +80,7 @@ function generateFormulas() {
 
 function draw() {
   p.fill(0, 20);
+  p.noStroke();
   p.rect(0, 0, p.width, p.height);
   variables["t"] = t;
   shapes.forEach((s, i) => {
