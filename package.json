@@ -1,7 +1,7 @@
 {
   "name": "folmura",
   "version": "1.0.0",
-  "description": "Draw auto generated formula",
+  "description": "Randomly generated visual with formula",
   "scripts": {
     "watch": "parcel src/index.html -d tmp",
     "build": "parcel build src/index.html -d docs --no-source-maps --public-url ./"

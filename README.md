@@ -1,3 +1,3 @@
 # folmura
 
-Draw auto generated formula.
+Randomly generated visual with formula.
