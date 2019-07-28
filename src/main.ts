@@ -27,9 +27,15 @@ type FormulaRange = {
   frameMax: number;
 };
 
+type Shape = {
+  pos: Vector;
+  size: Vector;
+  color: number[];
+};
+
 let formulas: formula.Formula[];
 let formulaRanges: FormulaRange[];
-let shapes: any[];
+let shapes: Shape[];
 let t = 0;
 
 function generateFormulas() {
