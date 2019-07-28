@@ -74,7 +74,6 @@ function generateFormulas() {
   });
   variables["a"] = random.getInt(2, 10);
   variables["b"] = random.getInt(2, 10);
-  variables["c"] = random.getInt(2, 10);
   t = 0;
 }
 

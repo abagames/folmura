@@ -14,7 +14,7 @@ export function generate(random: Random, depth = 0): Formula {
   if (r < 0.5 * dr) {
     return {
       func: variable,
-      value: random.select(["t", "t", "i", "a", "b", "c"])
+      value: random.select(["t", "i", "a", "b"])
     };
   } else {
     const funcs = [
