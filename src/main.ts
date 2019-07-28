@@ -124,13 +124,15 @@ function draw() {
       0.1;
     p.stroke(wrap(s.color[0], 0, 360), s.color[1], s.color[2], 0.5);
     p.strokeWeight(p.max((s.size.x + s.size.y) / 2, 1));
-    const ps = shapes[wrap(i - 1, 0, shapes.length)];
-    p.line(
-      ps.pos.x + p.width / 2,
-      ps.pos.y + p.height / 2,
-      s.pos.x + p.width / 2,
-      s.pos.y + p.height / 2
-    );
+    if (i > 0) {
+      const ps = shapes[i - 1];
+      p.line(
+        ps.pos.x + p.width / 2,
+        ps.pos.y + p.height / 2,
+        s.pos.x + p.width / 2,
+        s.pos.y + p.height / 2
+      );
+    }
   });
   formulaRanges.forEach(fr => {
     adjustFormulaRange(fr);
