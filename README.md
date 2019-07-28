@@ -1,3 +1,3 @@
 # folmura
 
-Randomly generated visual with formula.
+Randomly generated visual with randomly generated formula.
