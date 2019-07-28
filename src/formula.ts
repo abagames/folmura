@@ -28,7 +28,8 @@ export function generate(random: Random, depth = 0): Formula {
       [cos, 1],
       [exp, 1],
       [pow, 2],
-      [noise, 1]
+      [noise, 1],
+      [condition, 4]
     ];
     const fa = random.select(funcs);
     const func = fa[0];
@@ -94,4 +95,10 @@ function pow(formula: Formula, variables) {
 
 function noise(formula: Formula, variables) {
   return p.noise(calc(formula.args[0], variables));
+}
+
+function condition(formula: Formula, variables) {
+  return calc(formula.args[0], variables) > calc(formula.args[1], variables)
+    ? calc(formula.args[2], variables)
+    : calc(formula.args[3], variables);
 }
