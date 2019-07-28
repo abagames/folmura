@@ -55,10 +55,10 @@ function generateFormulas() {
       frameMax: -1
     };
   });
-  formulaRanges[0].targetMin = -p.width;
-  formulaRanges[0].targetMax = p.width;
-  formulaRanges[1].targetMin = -p.height;
-  formulaRanges[1].targetMax = p.height;
+  formulaRanges[0].targetMin = -p.width / 2;
+  formulaRanges[0].targetMax = p.width / 2;
+  formulaRanges[1].targetMin = -p.height / 2;
+  formulaRanges[1].targetMax = p.height / 2;
   formulaRanges[2].targetMin = 1;
   formulaRanges[2].targetMax = p.width / 8;
   formulaRanges[3].targetMin = 1;
@@ -135,6 +135,7 @@ function draw() {
   formulaRanges.forEach(fr => {
     adjustFormulaRange(fr);
   });
+  console.log(formulaRanges[0]);
   t += 1 / 60;
 }
 
