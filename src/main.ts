@@ -12,20 +12,55 @@ const variables: any = {};
 function setup() {
   p.createCanvas(200, 100);
   p.noStroke();
+  p.colorMode(p.HSB);
   p.background(0);
   generateFormulas();
   p.mouseClicked = generateFormulas;
 }
 
+type FormulaRange = {
+  min: number;
+  max: number;
+  targetMin: number;
+  targetMax: number;
+};
+
 let formulas: formula.Formula[];
+let formulaRanges: FormulaRange[];
 let shapes: any[];
 let t = 0;
 
 function generateFormulas() {
   formulas = range(7).map(() => formula.generate(random));
-  formulas[1] = formula.swapSinCos(formulas[0]);
-  formulas[3] = formula.swapSinCos(formulas[2]);
-  shapes = range(random.getInt(1, 10)).map(() => {
+  if (random.get() < 0.5) {
+    formulas[1] = formula.swapSinCos(formulas[0]);
+  }
+  if (random.get() < 0.5) {
+    formulas[3] = formula.swapSinCos(formulas[2]);
+  }
+  formulaRanges = formulas.map(() => {
+    return {
+      min: -1,
+      max: 1,
+      targetMin: -1,
+      targetMax: 1
+    };
+  });
+  formulaRanges[0].targetMin = -p.width;
+  formulaRanges[0].targetMax = p.width;
+  formulaRanges[1].targetMin = -p.height;
+  formulaRanges[1].targetMax = p.height;
+  formulaRanges[2].targetMin = 1;
+  formulaRanges[2].targetMax = p.width / 8;
+  formulaRanges[3].targetMin = 1;
+  formulaRanges[3].targetMax = p.height / 8;
+  formulaRanges[4].targetMin = 0;
+  formulaRanges[4].targetMax = 360;
+  formulaRanges[5].targetMin = 50;
+  formulaRanges[5].targetMax = 100;
+  formulaRanges[6].targetMin = 50;
+  formulaRanges[6].targetMax = 100;
+  shapes = range(random.getInt(10, 100)).map(() => {
     return { pos: new Vector(), size: new Vector(), color: [0, 0, 0] };
   });
   t = 0;
@@ -37,33 +72,67 @@ function draw() {
   variables["t"] = t;
   shapes.forEach((s, i) => {
     variables["i"] = i;
-    s.pos
-      .set(
-        formula.calc(formulas[0], variables),
-        formula.calc(formulas[1], variables)
-      )
-      .wrap(-p.width / 2, p.width / 2, -p.height / 2, p.height / 2);
-    s.size
-      .set(
-        formula.calc(formulas[2], variables),
-        formula.calc(formulas[3], variables)
-      )
-      .wrap(1, p.width / 10, 1, p.height / 10);
+    s.pos.set(
+      adjustFormulaRange(
+        formulaRanges[0],
+        formula.calc(formulas[0], variables)
+      ),
+      adjustFormulaRange(formulaRanges[1], formula.calc(formulas[1], variables))
+    );
+    s.size.set(
+      adjustFormulaRange(
+        formulaRanges[2],
+        formula.calc(formulas[2], variables)
+      ),
+      adjustFormulaRange(formulaRanges[3], formula.calc(formulas[3], variables))
+    );
     s.color[0] +=
-      (wrap(formula.calc(formulas[4], variables), 0, 100) - s.color[0]) * 0.1;
+      (adjustFormulaRange(
+        formulaRanges[4],
+        formula.calc(formulas[4], variables)
+      ) -
+        s.color[0]) *
+      0.1;
     s.color[1] +=
-      (wrap(formula.calc(formulas[5], variables), 0, 100) - s.color[0]) * 0.1;
+      (adjustFormulaRange(
+        formulaRanges[5],
+        formula.calc(formulas[5], variables)
+      ) -
+        s.color[1]) *
+      0.1;
     s.color[2] +=
-      (wrap(formula.calc(formulas[6], variables), 0, 100) - s.color[0]) * 0.1;
-    p.fill(150 - s.color[0], 150 - s.color[1], 150 - s.color[2], 100);
-    p.rect(
-      s.pos.x + p.width / 2 - s.size.x / 2,
-      s.pos.y + p.height / 2 - s.size.y / 2,
-      s.size.x,
-      s.size.y
+      (adjustFormulaRange(
+        formulaRanges[6],
+        formula.calc(formulas[6], variables)
+      ) -
+        s.color[2]) *
+      0.1;
+    p.stroke(wrap(s.color[0], 0, 360), s.color[1], s.color[2], 0.5);
+    p.strokeWeight(p.max((s.size.x + s.size.y) / 2, 1));
+    const ps = shapes[wrap(i - 1, 0, shapes.length)];
+    p.line(
+      ps.pos.x + p.width / 2,
+      ps.pos.y + p.height / 2,
+      s.pos.x + p.width / 2,
+      s.pos.y + p.height / 2
     );
   });
   t += 1 / 60;
+}
+
+function adjustFormulaRange(fr: FormulaRange, v: number) {
+  if (isNaN(v)) {
+    return 0;
+  }
+  fr.min += (v - fr.min) * (v < fr.min ? 0.1 : 0.01);
+  fr.max += (v - fr.max) * (v > fr.max ? 0.1 : 0.01);
+  if (fr.max <= fr.min) {
+    fr.max = fr.min + 0.01;
+  }
+  return (
+    ((v - fr.min) / (fr.max - fr.min)) * (fr.targetMax - fr.targetMin) +
+    fr.targetMin
+  );
 }
 
 new p5((_p: p5) => {

@@ -67,7 +67,11 @@ function times(formula: Formula, variables) {
 }
 
 function divide(formula: Formula, variables) {
-  return calc(formula.args[0], variables) / calc(formula.args[1], variables);
+  let v = calc(formula.args[1], variables);
+  if (v === 0) {
+    v = 0.01;
+  }
+  return calc(formula.args[0], variables) / v;
 }
 
 function sin(formula: Formula, variables) {
