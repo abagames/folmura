@@ -1,4 +1,5 @@
 import p5 from "p5";
+import * as gcc from "gif-capture-canvas";
 import * as formula from "./formula";
 import { Random } from "./random";
 import { range, wrap } from "./math";
@@ -6,12 +7,14 @@ import { Vector } from "./vector";
 
 export let p: p5;
 
+const isCapturing = false;
 const seedRandom = new Random();
 const random = new Random();
 const variables: any = {};
+let renderer;
 
 function setup() {
-  p.createCanvas(500, 250);
+  renderer = p.createCanvas(500, 250);
   p.colorMode(p.HSB);
   p.background(0);
   const seed = loadFromUrl();
@@ -22,6 +25,9 @@ function setup() {
     generateFormulas();
   }
   p.mouseClicked = nextFormulas;
+  if (isCapturing) {
+    gcc.setOptions({ capturingFps: 60, durationSec: 2 });
+  }
 }
 
 type FormulaRange = {
@@ -150,8 +156,10 @@ function draw() {
   formulaRanges.forEach(fr => {
     adjustFormulaRange(fr);
   });
-  console.log(formulaRanges[0]);
   t += 1 / 60;
+  if (isCapturing) {
+    gcc.capture(renderer.canvas);
+  }
 }
 
 function adjustFormulaValue(fr: FormulaRange, v: number) {
