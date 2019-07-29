@@ -24,7 +24,7 @@ function setup() {
     random.setSeed(seed);
     generateFormulas();
   }
-  p.mouseClicked = nextFormulas;
+  p.touchStarted = nextFormulas;
   if (isCapturing) {
     gcc.setOptions({ capturingFps: 60, durationSec: 2 });
   }
@@ -55,6 +55,7 @@ function nextFormulas() {
   saveAsUrl(seed);
   random.setSeed(seed);
   generateFormulas();
+  return false;
 }
 
 function generateFormulas() {
