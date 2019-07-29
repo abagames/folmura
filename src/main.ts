@@ -6,6 +6,7 @@ import { Vector } from "./vector";
 
 export let p: p5;
 
+const seedRandom = new Random();
 const random = new Random();
 const variables: any = {};
 
@@ -13,8 +14,14 @@ function setup() {
   p.createCanvas(500, 250);
   p.colorMode(p.HSB);
   p.background(0);
-  generateFormulas();
-  p.mouseClicked = generateFormulas;
+  const seed = loadFromUrl();
+  if (seed == null) {
+    nextFormulas();
+  } else {
+    random.setSeed(seed);
+    generateFormulas();
+  }
+  p.mouseClicked = nextFormulas;
 }
 
 type FormulaRange = {
@@ -36,6 +43,13 @@ let formulas: formula.Formula[];
 let formulaRanges: FormulaRange[];
 let shapes: Shape[];
 let t = 0;
+
+function nextFormulas() {
+  const seed = seedRandom.getInt(0, 999999999);
+  saveAsUrl(seed);
+  random.setSeed(seed);
+  generateFormulas();
+}
 
 function generateFormulas() {
   formulas = range(7).map(() => formula.generate(random));
@@ -164,6 +178,36 @@ function adjustFormulaRange(fr: FormulaRange) {
   }
   fr.frameMin = fr.max;
   fr.frameMax = fr.min;
+}
+
+function saveAsUrl(seed: number) {
+  const baseUrl = window.location.href.split("?")[0];
+  let url = `${baseUrl}?s=${seed}`;
+  try {
+    window.history.replaceState({}, "", url);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function loadFromUrl() {
+  const query = window.location.search.substring(1);
+  if (query == null) {
+    return undefined;
+  }
+  let params = query.split("&");
+  let seedStr: string;
+  for (let i = 0; i < params.length; i++) {
+    const param = params[i];
+    const pair = param.split("=");
+    if (pair[0] === "s") {
+      seedStr = pair[1];
+    }
+  }
+  if (seedStr == null) {
+    return undefined;
+  }
+  return Math.floor(Number(seedStr));
 }
 
 new p5((_p: p5) => {
