@@ -5,7 +5,7 @@ import { range } from "./math";
 export type Formula = {
   func: Function;
   args?: Formula[];
-  value?: number | string;
+  value?: string;
 };
 
 export function generate(random: Random, depth = 0): Formula {
