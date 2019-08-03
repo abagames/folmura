@@ -4,7 +4,7 @@ Randomly generated visual with randomly generated formula.
 
 Click/Tap to generate another one.
 
-[![screenshot](docs/folmura.gif)](https://abagames.github.io/folmura/index.html)
+[![screenshot](docs/screenshots/folmura.gif)](https://abagames.github.io/folmura/index.html)
 
 ## Interesting random seeds
 
