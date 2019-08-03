@@ -105,9 +105,7 @@ function generateFormulas() {
 }
 
 function draw() {
-  p.fill(0, 20);
-  p.noStroke();
-  p.rect(0, 0, p.width, p.height);
+  p.background(0);
   variables["t"] = t;
   shapes.forEach((s, i) => {
     variables["i"] = i;
