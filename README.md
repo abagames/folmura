@@ -2,7 +2,7 @@
 
 Randomly generated visual with randomly generated formula.
 
-Click/Tap to generate another one.
+Click/Tap to generate another one. Press the 'F' key to see the formulas.
 
 [![screenshot](docs/screenshots/folmura.gif)](https://abagames.github.io/folmura/index.html)
 
