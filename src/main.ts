@@ -15,6 +15,12 @@ let renderer;
 
 function setup() {
   renderer = p.createCanvas(500, 250);
+  renderer.canvas.style.cssText = `
+position: absolute;
+left: 50%;
+top: 50%;
+transform: translate(-50%, -50%);
+  `;
   p.colorMode(p.HSB);
   p.background(0);
   const seed = loadFromUrl();
