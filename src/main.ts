@@ -12,6 +12,8 @@ const seedRandom = new Random();
 const random = new Random();
 const variables: any = {};
 let renderer;
+let formulaDiv: HTMLDivElement;
+let isShowingFormula = false;
 
 function setup() {
   renderer = p.createCanvas(500, 250);
@@ -23,6 +25,17 @@ transform: translate(-50%, -50%);
   `;
   p.colorMode(p.HSB);
   p.background(0);
+  formulaDiv = document.createElement("div");
+  formulaDiv.style.cssText = `
+color: white;
+font-family: monospace;
+font-size: 12px;
+width: 500px;
+position: absolute;
+left: 50%;
+transform: translate(-50%, 0%);
+`;
+  document.body.appendChild(formulaDiv);
   const seed = loadFromUrl();
   if (seed == null) {
     nextFormulas();
@@ -31,6 +44,13 @@ transform: translate(-50%, -50%);
     generateFormulas();
   }
   p.touchStarted = nextFormulas;
+  p.keyPressed = () => {
+    if (p.key !== "f") {
+      return;
+    }
+    isShowingFormula = !isShowingFormula;
+    isShowingFormula ? showFormula() : hideFormula();
+  };
   if (isCapturing) {
     gcc.setOptions({ capturingFps: 60, durationSec: 2 });
   }
@@ -102,6 +122,9 @@ function generateFormulas() {
   variables["a"] = random.getInt(2, 10);
   variables["b"] = random.getInt(2, 10);
   t = 0;
+  if (isShowingFormula) {
+    showFormula();
+  }
 }
 
 function draw() {
@@ -191,6 +214,24 @@ function adjustFormulaRange(fr: FormulaRange) {
   }
   fr.frameMin = fr.max;
   fr.frameMax = fr.min;
+}
+
+function showFormula() {
+  formulaDiv.innerText = `
+x = ${formula.toString(formulas[0])}
+y = ${formula.toString(formulas[1])}
+w = ${formula.toString(formulas[2])}
+h = ${formula.toString(formulas[3])}
+H = ${formula.toString(formulas[4])}
+S = ${formula.toString(formulas[5])}
+B = ${formula.toString(formulas[6])}
+a = ${variables["a"]}
+b = ${variables["b"]}
+`;
+}
+
+function hideFormula() {
+  formulaDiv.innerText = "";
 }
 
 function saveAsUrl(seed: number) {

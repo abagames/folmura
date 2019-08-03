@@ -8,6 +8,36 @@ export type Formula = {
   value?: string;
 };
 
+const funcList = [
+  [plus, 2],
+  [minus, 2],
+  [times, 2],
+  [divide, 2],
+  [sin, 1],
+  [sin, 1],
+  [cos, 1],
+  [cos, 1],
+  [exp, 1],
+  [pow, 2],
+  [noise, 1],
+  [condition, 4]
+];
+
+const funcListNames = [
+  "plus",
+  "minus",
+  "times",
+  "divide",
+  "sin",
+  "sin",
+  "cos",
+  "cos",
+  "exp",
+  "pow",
+  "noise",
+  "condition"
+];
+
 export function generate(random: Random, depth = 0): Formula {
   const r = random.get();
   const dr = depth / 3;
@@ -17,21 +47,7 @@ export function generate(random: Random, depth = 0): Formula {
       value: random.select(["t", "i", "a", "b"])
     };
   } else {
-    const funcs = [
-      [plus, 2],
-      [minus, 2],
-      [times, 2],
-      [divide, 2],
-      [sin, 1],
-      [sin, 1],
-      [cos, 1],
-      [cos, 1],
-      [exp, 1],
-      [pow, 2],
-      [noise, 1],
-      [condition, 4]
-    ];
-    const fa = random.select(funcs);
+    const fa = random.select(funcList);
     const func = fa[0];
     const args = range(fa[1]).map(() => generate(random, depth + 1));
     return { func, args };
@@ -48,6 +64,30 @@ export function swapSinCos(f: Formula) {
     args: f.args == null ? undefined : f.args.map(f => swapSinCos(f)),
     value: f.value
   };
+}
+
+export function toString(formula: Formula) {
+  const func = formula.func;
+  let argStrs = [];
+  if (formula.args != null) {
+    argStrs = formula.args.map(a => toString(a));
+  }
+  if (func === plus) {
+    return `(${argStrs[0]}+${argStrs[1]})`;
+  } else if (func === minus) {
+    return `(${argStrs[0]}-${argStrs[1]})`;
+  } else if (func === times) {
+    return `${argStrs[0]}*${argStrs[1]}`;
+  } else if (func === divide) {
+    return `${argStrs[0]}/${argStrs[1]}`;
+  } else if (func === variable) {
+    return formula.value;
+  } else if (func == condition) {
+    return `(${argStrs[0]}>${argStrs[1]}?${argStrs[2]}:${argStrs[3]})`;
+  }
+  const fi = funcList.findIndex(f => f[0] === func);
+  const name = funcListNames[fi];
+  return `${name}(${argStrs.join(",")})`;
 }
 
 function variable(formula: Formula, variables) {
