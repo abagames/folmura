@@ -31,3 +31,29 @@ Click/Tap to generate another one. Press the 'F' key to see the formulas.
 [![929464066](docs/screenshots/929464066.gif)](https://abagames.github.io/folmura/index.html?s=929464066)
 [![38676985](docs/screenshots/38676985.gif)](https://abagames.github.io/folmura/index.html?s=38676985)
 [![567782962](docs/screenshots/567782962.gif)](https://abagames.github.io/folmura/index.html?s=567782962)
+
+## How to generate a visual
+
+The canvas consists of points connected with lines. The position, size and color of each point are defined by variables:
+
+```
+x/y = horizontal/vertical position
+w/h = width/height ((width + height) / 2 is used as a stroke weight of each line)
+H/S/B = color (Hue/Saturation/Brightness)
+```
+
+Each variable is calculated by a randomly generated formula. The formula is generated with combination of functions:
+
+```
+v1 + v2, v1 - v2, v1 * v2, v1 / v2, 
+sin(v1), cos(v1), exp(v1), pow(v1, v2), noise(v1), 
+v1 > v2 ? v3 : v4
+```
+
+The functions described above or variables described below are placed recursively to v1-v4.
+
+```
+t = time (in seconds)
+i = index of the point (each point has an index starting from 0)
+a/b = random integer value (2 to 10)
+```
